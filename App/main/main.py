@@ -1,5 +1,6 @@
 from comando import Comando
 from GUI.Interface import Interface
+from adaptador import Adaptador
 
 def main():
     comando = Comando()
@@ -8,8 +9,10 @@ def main():
         tabuleiro = comando.getTabuleiro()
         controle = comando.getControle()
 
-        interface = Interface(tabuleiro, controle)
-        interface.adicionarObserver(comando)
+        adaptador = Adaptador(controle, tabuleiro)
+        adaptador.setComando(comando)
+
+        interface = Interface(adaptador)
         valor = interface.run()
         if valor == 0:
             break

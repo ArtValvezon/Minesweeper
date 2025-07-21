@@ -1,9 +1,9 @@
 from tkinter import *
 from tkinter import messagebox
-from tabuleiro import Tabuleiro
-from controle import Controle
+from adaptador import Adaptador
 from Interface.subject import Subject
 from GUI.display import Display7Segmentos
+
 
 altura_sombra = 4
 altura_bordas = 32
@@ -12,16 +12,16 @@ cinza_claro = '#C0C0C0'
 cinza_medio = '#BDBDBD'
 cinza_escuro = '#808080'
 
-class Interface(Subject):
-    def __init__(self, tabuleiro: Tabuleiro, controle: Controle):
-        Subject.__init__(self, name="Interface")
-        self.flag = 0
+class Interface():
+    def __init__(self, adaptador: Adaptador):
+        self.flag = False
         self.root = Tk()
         self.root.title("Campo Minado")
         self.root.iconbitmap("Imagens/bomb_icon.ico")
-        self.linhas, self.colunas = tabuleiro.getDimensoes()
-        self.tabuleiro = tabuleiro
-        self.controle = controle
+
+        self.adaptador = adaptador
+        self.linhas, self.colunas = adaptador.getDimensoes()
+        
 
         self.largura_root = self.colunas * altura_celula + altura_bordas * 2
         self.altura_root = self.linhas * altura_celula + altura_bordas * 5 
@@ -51,53 +51,78 @@ class Interface(Subject):
         self.criarMenu()
         self.criarPlacar()
 
-    def run(self):
+    def run(self)-> bool:
+        """ Inicia o main loop da root
+
+        Returns:
+            bool: caso tenha sido reiniciado retorna True
+        """
+
         self.root.mainloop()
         return self.flag
     
-    def stop(self):
-        self.flag = 1
+    def stop(self)-> None:
+        """ Cancela a GUI e marca flag como True
+        """
+
+        self.flag = True
         self.root.destroy()
 
-    def getCell_Image(self, i, j):
-        value = self.tabuleiro.tabuleiro[i][j].getValor()
+    def getCell_Image(self, i: int, j: int)-> Image:
+        """ Retorna a imagem correspondente ao conteudo da celula
+
+        Args:
+            i (int): coordenada x
+            j (int): coordenada y
+
+        Raises:
+            ValueError: caso uma celula retorne um valor incorreto
+
+        Returns:
+            Image: tkinter image
+        """
+
+        value = self.adaptador.getValor(i, j)
         if value in self.imagens:
             return self.imagens[value]
         else:
             raise ValueError(f"Valor inválido para a célula: {value}")
 
-    def criarFrames(self):
-        def get_sombra_horizontal(largura):
+    def criarFrames(self)-> None:
+        """ Cria as bordas da aplcação com todos os efeitos de luz e sombra
+        """
+
+        def get_sombra_horizontal(largura)-> Frame:
             return Frame(self.root,
                         width= largura,
                         height=altura_sombra,
                         bg=cinza_escuro)
 
-        def get_sombra_vertical(altura):
+        def get_sombra_vertical(altura)-> Frame:
             return Frame(self.root,
                         width=altura_sombra,
                         height=altura,
                         bg=cinza_escuro)
 
-        def get_luz_horizontal(largura):
+        def get_luz_horizontal(largura)-> Frame:
             return Frame(self.root,
                         width= largura,
                         height=altura_sombra,
                         bg='white')
 
-        def get_luz_vertical(altura):
+        def get_luz_vertical(altura)-> Frame:
             return Frame(self.root,
                         width=altura_sombra,
                         height=altura,
                         bg='white')
 
-        def get_horizontal_frame():
+        def get_horizontal_frame()-> Frame:
             return Frame(self.root,
                         width= self.largura_root - (altura_bordas * 2),
                         height=altura_bordas,
                         bg=cinza_claro)
 
-        def get_vertical_frame():
+        def get_vertical_frame()-> Frame:
             return Frame(self.root,
                         width=altura_bordas,
                         height=self.altura_root,
@@ -128,30 +153,45 @@ class Interface(Subject):
         get_sombra_vertical(self.altura_root - 5 * altura_bordas + 2 * altura_sombra).place(x=altura_bordas - altura_sombra, y=altura_bordas * 4 - altura_sombra)
         get_luz_vertical(self.altura_root - 5 * altura_bordas + 2 * altura_sombra).place(x=self.largura_root - altura_bordas, y=altura_bordas * 4 - altura_sombra)
 
-    def cliqueEsquerdo(self, event, i, j):
-        self.tabuleiro.abrirCelula(i, j)
+    def cliqueEsquerdo(self, event, i: int, j: int)-> None:
+        """ Clique com o botão esquerdo em alguma celula
+
+        Args:
+            i (int): coordenada x
+            j (int): coordenada y
+        """
+
+        self.adaptador.abrirCelula(i, j)
         self.atualizarBotoes()
 
-    def cliqueDireito(self, event, i, j):
-        self.tabuleiro.flagCelula(i, j)
+    def cliqueDireito(self, event, i: int, j: int)-> None:
+        """ Clique com o botão direito em alguma celula
+
+        Args:
+            i (int): coordenada x
+            j (int): coordenada y
+        """
+
+        self.adaptador.flagCelula(i, j)
         self.atualizarBotoes()
 
-    def atualizarBotoes(self):
+    def atualizarBotoes(self)-> None:
+        """ Atualiza todos os botões e placar para mostrar as casas abertas 
+        """
         for i in range(self.linhas):
             for j in range(self.colunas):
                 nova_imagem = self.getCell_Image(i, j)
                 self.botoes[i][j].configure(image=nova_imagem)
                 self.botoes[i][j].image = nova_imagem
 
-        self.atualizarPlacar(self.controle.getBombas(), self.controle.getCasas())
-        
-    def setTabuleiro(self, tabuleiro: Tabuleiro):
-        self.tabuleiro = tabuleiro
-        self.atualizarBotoes()
+        self.atualizarPlacar(self.adaptador.getBombas(), self.adaptador.getCasas())
 
-    def criarMenu(self):
-        def setDificuldade(dificuldade):
-            self.observer[0].setDificuldade(dificuldade)
+    def criarMenu(self)-> None:
+        """ Cria a barra de menu com os menus adicionais
+        """
+
+        def setDificuldade(dificuldade)-> None:
+            self.adaptador.setDificuldade(dificuldade)
             self.stop()
 
         menu = Menu(self.root)
@@ -170,12 +210,13 @@ class Interface(Subject):
         menuArquivo.add_command(label="Difícil", command=lambda: setDificuldade("dificil"))
         menu.add_cascade(label="Dificuldade", menu=menuArquivo)
 
-        
-
         self.root.config(menu=menu)
 
 
-    def criarBotoes(self):
+    def criarBotoes(self)-> None:
+        """ Cria um botão com imagem para cada celula do tabuleiro
+        """
+
         self.botoes = []
 
         frame_tabuleiro = Frame(self.root, bg=cinza_claro)
@@ -195,14 +236,16 @@ class Interface(Subject):
                                 )
                 btn.grid(row=i, column=j)
 
-                # Usa bind para capturar o clique com botão direito e esquerdo
                 btn.bind("<Button-1>", lambda event, i=i, j=j: self.cliqueEsquerdo(event, i, j))
                 btn.bind("<Button-3>", lambda event, i=i, j=j: self.cliqueDireito(event, i, j))
 
                 linha.append(btn)
             self.botoes.append(linha)
 
-    def reset(self):
+    def resetDisplay(self)-> None:
+        """ Desliga todos os segmentos dos placares
+        """
+
         self.display_Bomb_Centena.limpar()
         self.display_Bomb_Dezena.limpar()   
         self.display_Bomb_Unidade.limpar()
@@ -210,11 +253,14 @@ class Interface(Subject):
         self.display_Casa_Dezena.limpar()
         self.display_Casa_Unidade.limpar()
 
-    def criarPlacar(self):
-        def reset():
-            self.observer[0].reset()
+    def criarPlacar(self)-> None:
+        """ Cria os placares de 7 segmentos e o botão de reset com emoji
+        """
+
+        def reset()-> None:
+            self.adaptador.reset()
             self.atualizarBotoes()
-            self.reset()
+            self.resetDisplay()
 
         ligado = 'red'
         self.display_Bomb_Centena = Display7Segmentos(self.root, cor_ativa=ligado, x=altura_bordas + 3, y=altura_bordas + 3)
@@ -228,7 +274,10 @@ class Interface(Subject):
         self.face = Button(self.root, image=self.imagens["jogando"], bd=0, highlightthickness=0, padx=0, pady=0, relief="flat", command=reset)
         self.face.place(x=(self.largura_root - 31) // 2, y=altura_bordas + 15)
 
-    def atualizarPlacar(self, bombas = 0, casas = 0):
+    def atualizarPlacar(self, bombas: int = 0, casas: int = 0)-> None:
+        """ Atualiza os placares de pontuação com o numero de casas e bombas
+        """
+
         bombas_str = str(bombas).zfill(3)
         casas_str = str(casas).zfill(3)
 
@@ -241,7 +290,7 @@ class Interface(Subject):
         self.display_Casa_Unidade.mostrar_numero(casas_str[2])
 
         self.face
-        estado = self.observer[0].getEstado()
+        estado = self.adaptador.getEstado()
         nova_imagem = self.imagens[estado]
         self.face.configure(image=nova_imagem)
         self.face.image = nova_imagem
