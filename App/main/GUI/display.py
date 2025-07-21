@@ -18,7 +18,16 @@ class Display7Segmentos:
         '9': 'AFGBC',
     }
 
-    def __init__(self, root, x=0, y=0, cor_ativa=ligado):
+    def __init__(self, root, x: int=0, y: int=0, cor_ativa: str=ligado):
+        """ Cria um display de 7 segmentos
+
+        Args:
+            root (_type_): root da interface tk
+            x (int, optional): posição horizontal. Defaults to 0.
+            y (int, optional): posição vertical. Defaults to 0.
+            cor_ativa (str, optional): cor desejada. Defaults to '#130101'.
+        """
+
         self.cor_ativa = cor_ativa
         self.canvas = tk.Canvas(root, width=29, height=58, bg='black', bd=0, highlightthickness=0)
         self.canvas.place(x=x, y=y)
@@ -34,7 +43,13 @@ class Display7Segmentos:
         }
 
 
-    def mostrar_numero(self, numero):
+    def mostrar_numero(self, numero: int):
+        """ Revela o numero passado no display
+
+        Args:
+            numero (int): Numero a ser exibido
+        """
+
         numero = str(numero)
         segmentos_ativos = self.mapa_segmentos.get(numero, '')
         for nome, segmento in self.segmentos.items():
@@ -42,5 +57,7 @@ class Display7Segmentos:
             self.canvas.itemconfig(segmento, fill=cor)
 
     def limpar(self):
+        """ Desliga todos o segmentos do display
+        """
         for segmento in self.segmentos.values():
             self.canvas.itemconfig(segmento, fill=desligado)

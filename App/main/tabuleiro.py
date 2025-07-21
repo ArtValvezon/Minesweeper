@@ -23,7 +23,13 @@ class Tabuleiro(Subject):
         for linha in matriz:
             print(" ".join(str(valor.getValor()) for valor in linha))
 
-    def getRandom_Matrix(self):
+    def getRandom_Matrix(self)-> list[list[bool]]:
+        """ Cria uma matriz com a quantidade de bombas espalhadas pelo tabuleiro
+
+        Returns:
+            list[list[bool]: matriz onde bomba = True
+        """
+
         matriz = [[False for _ in range(self.colunas)] for _ in range(self.linhas)]
         posicoes = random.sample([(i, j) for i in range(self.linhas) for j in range(self.colunas)], self.bombas)
 
@@ -33,6 +39,9 @@ class Tabuleiro(Subject):
         return matriz
 
     def setTabuleiro(self):
+        """ Cria matriz com as celulas com os valores de obmbas ao redor
+        """
+
         if self.tabuleiro:
             del self.tabuleiro
 
@@ -61,17 +70,45 @@ class Tabuleiro(Subject):
 
         self.tabuleiro = tabuleiro
 
-    def abrirCelula(self, i, j):
+    def abrirCelula(self, i: int, j: int):
+        """ abre celula correspondete
+
+        Args:
+            i (int): coordenada x
+            j (int): coordenada y
+        """
+
         if 0 <= i < self.linhas and 0 <= j < self.colunas:
-            resultado = self.tabuleiro[i][j].abrir()
-        return False
+            self.tabuleiro[i][j].abrir()
+
     
-    def flagCelula(self, i, j):
+    def flagCelula(self, i: int, j: int):
+        """ set flag na celula correspondente
+
+        Args:
+            i (int): coordenada x
+            j (int): coordenada y
+
+        Returns:
+            bool
+        """
+
         if 0 <= i < self.linhas and 0 <= j < self.colunas:
             return self.tabuleiro[i][j].setFlag()
         return False
     
-    def contarVizinhos(self, matriz, i, j):
+    def contarVizinhos(self, matriz: list[list[bool]], i: int, j: int)-> int:
+        """ Conta quantas celulas de bomba existe ao redor da celula
+
+        Args:
+            matriz (list[list[bool]]): matiz booleana
+            i (int): coordenada x
+            j (int): coordenada y
+
+        Returns:
+            int: quantidade de bombas
+        """
+
         linhas = len(matriz)
         colunas = len(matriz[0])
         contador = 0
@@ -89,6 +126,9 @@ class Tabuleiro(Subject):
         return contador
     
     def abrirTabuleiro(self):
+        """ Abre todas as celulas do tabuleiro
+        """
+
         for i in range(self.linhas):
             for j in range(self.colunas):
                 self.tabuleiro[i][j].abrir(False)
@@ -100,6 +140,9 @@ class Tabuleiro(Subject):
                     self.celulas[i][j].bomba = True
 
     def notificarObserver(self):
+        """ notifica o comando de que o jogo acabou
+        """
+        
         for observer in self.observer:
             observer.update("perdeu")
 

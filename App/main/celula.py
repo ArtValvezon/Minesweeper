@@ -3,7 +3,13 @@ from Interface.subject import Subject
 
 
 class Celula(Subject, Observer):
-    def __init__(self, controle, valor=0):
+    def __init__(self, controle, valor: int=0):
+        """ Cria objeto celula
+
+        Args:
+            controle (Controle): controle responsavel por armazanar as caracteristicas das celulas
+            valor (int, optional): Valor de bombas da celula, 9 = bomba. Defaults to 0.
+        """
         self.aberto = False
         self.flag = False
         self.explodiu = False
@@ -12,16 +18,35 @@ class Celula(Subject, Observer):
         self.controle = controle
 
     def update(self):
+        """ Celula adjacente abre essa
+        """
         self.abrir()
 
     def adicionarTabuleito(self, tabuleiro):
+        """ Adiciona um tabuleiro como observer 
+
+        Args:
+            tabuleiro (Tabuleiro): tabuleiro que a celula esta acossiada
+        """
         self.tabuleiro = tabuleiro
 
     def notificarTabuleiro(self):
+        """ Notifica o tabuleiro que uma celula foi explodida
+        """
+
         if self.tabuleiro:
             self.tabuleiro.notificarObserver()
 
-    def abrir(self, jogo= True):
+    def abrir(self, jogo= True)-> bool:
+        """ Abre celula 
+
+        Args:
+            jogo (bool, optional): Caso o jogo tenha terminado jogo = False. Defaults to True.
+
+        Returns:
+            bool
+        """
+
         if jogo:
             if not self.flag:
                 if self.aberto:
@@ -39,7 +64,13 @@ class Celula(Subject, Observer):
             self.aberto = True
         return False
     
-    def setFlag(self):
+    def setFlag(self)-> bool:
+        """ Adiciona ou remove bandeira da celula
+
+        Returns:
+            bool
+        """
+
         if not self.aberto:
             if self.flag:
                 if self.controle.removeFlag():
@@ -52,6 +83,12 @@ class Celula(Subject, Observer):
         return False
     
     def getValor(self):
+        """ Retorna o estado da celula
+
+        Returns:
+            Any: Estado da celula, F - flag, E - explodiu, B - bomba, int - valor
+        """
+
         if self.explodiu:
             return "E"
         if self.aberto:
@@ -62,6 +99,9 @@ class Celula(Subject, Observer):
             return "X"
         
     def abrirAdjacentes(self):
+        """ Conta as flag para abrir as cellas adjacentes
+        """
+        
         if self.valor == 0:
             return
         i = 0

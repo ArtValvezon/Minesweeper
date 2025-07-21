@@ -12,6 +12,9 @@ class Comando(Singleton, Observer):
         self.criarJogo()
 
     def criarJogo(self):
+        """ inicializa o tabuleiro e controle de celulas com a dificuldade definida
+        """
+
         self.linhas = self.dificuldade.getLinha()
         self.colunas = self.dificuldade.getColuna()
         self.bombas = self.dificuldade.getBombas()
@@ -43,15 +46,30 @@ class Comando(Singleton, Observer):
         self.criarJogo()
 
     def reset(self):
+        """ Reseta o tabuleiro e controle com a mesma dificldade
+        """
+
         self.tabuleiro.setTabuleiro()
         self.controle.reset()
         self.estado = "jogando"
 
-    def terminarJogo(self, estado):
+    def terminarJogo(self, estado: str):
+        """ Termina o jogo e abre o tabuleiro
+
+        Args:
+            estado (str): estado do jogo
+        """
+        
         self.tabuleiro.abrirTabuleiro()
         self.estado = estado
 
-    def update(self, estado):
+    def update(self, estado: str):
+        """ Recebe a notificação dos Subject que a classe observa
+
+        Args:
+            estado (str): estado do jogo
+        """
+
         if estado == "reset":
             self.reset()
         else:
