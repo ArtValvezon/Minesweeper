@@ -81,6 +81,15 @@ class Tabuleiro(Subject):
         if 0 <= i < self.linhas and 0 <= j < self.colunas:
             self.tabuleiro[i][j].abrir()
 
+    def getValor(self, i: int, j: int):
+        """ Retorna o valor da celula 
+
+        Args:
+            i (int): coordenada x
+            j (int): coordenada y
+        """
+        return self.tabuleiro[i][j].getValor()
+
     
     def flagCelula(self, i: int, j: int):
         """ set flag na celula correspondente
@@ -142,7 +151,7 @@ class Tabuleiro(Subject):
     def notificarObserver(self):
         """ notifica o comando de que o jogo acabou
         """
-        
+
         for observer in self.observer:
             observer.update("perdeu")
 
