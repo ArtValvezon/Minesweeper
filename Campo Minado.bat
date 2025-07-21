@@ -1,0 +1,1 @@
+C:\Users\avalv\Minesweeper\venv\Scripts\activate base && python C:\Users\avalv\Minesweeper\App\main\main.py
