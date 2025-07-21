@@ -11,7 +11,7 @@ class Comando(Singleton, Observer):
         self.dificuldade = Facil() 
         self.criarJogo()
 
-    def criarJogo(self):
+    def criarJogo(self)-> None:
         """ inicializa o tabuleiro e controle de celulas com a dificuldade definida
         """
 
@@ -24,16 +24,16 @@ class Comando(Singleton, Observer):
         self.tabuleiro.adicionarObserver(self)
         self.estado = "jogando"
 
-    def getControle(self):
+    def getControle(self)-> Controle:
         return self.controle
     
-    def getTabuleiro(self):
+    def getTabuleiro(self)-> Tabuleiro:
         return self.tabuleiro
     
-    def getEstado(self):
+    def getEstado(self)-> str:
         return self.estado
 
-    def setDificuldade(self, dificuldade):
+    def setDificuldade(self, dificuldade)-> None:
         if dificuldade == "facil":
             self.dificuldade = Facil()
         elif dificuldade == "medio":
@@ -45,7 +45,7 @@ class Comando(Singleton, Observer):
 
         self.criarJogo()
 
-    def reset(self):
+    def reset(self)-> None:
         """ Reseta o tabuleiro e controle com a mesma dificldade
         """
 
@@ -53,17 +53,17 @@ class Comando(Singleton, Observer):
         self.controle.reset()
         self.estado = "jogando"
 
-    def terminarJogo(self, estado: str):
+    def terminarJogo(self, estado: str)-> None:
         """ Termina o jogo e abre o tabuleiro
 
         Args:
             estado (str): estado do jogo
         """
-        
+
         self.tabuleiro.abrirTabuleiro()
         self.estado = estado
 
-    def update(self, estado: str):
+    def update(self, estado: str)-> None:
         """ Recebe a notificação dos Subject que a classe observa
 
         Args:

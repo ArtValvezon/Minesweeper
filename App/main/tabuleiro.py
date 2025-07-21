@@ -15,7 +15,12 @@ class Tabuleiro(Subject):
         self.controle = controle
         self.setTabuleiro()
         
-    def getDimensoes(self):
+    def getDimensoes(self)-> tuple[int, int]:
+        """ Retorna dimensões do tabuleiro
+
+        Returns:
+            tuple[int, int]: (x, y)
+        """
         return self.linhas, self.colunas
     
     def imprimirMatriz(self):
@@ -38,7 +43,7 @@ class Tabuleiro(Subject):
 
         return matriz
 
-    def setTabuleiro(self):
+    def setTabuleiro(self)-> None:
         """ Cria matriz com as celulas com os valores de obmbas ao redor
         """
 
@@ -70,8 +75,8 @@ class Tabuleiro(Subject):
 
         self.tabuleiro = tabuleiro
 
-    def abrirCelula(self, i: int, j: int):
-        """ abre celula correspondete
+    def abrirCelula(self, i: int, j: int)-> None:
+        """ Abre celula correspondete
 
         Args:
             i (int): coordenada x
@@ -81,7 +86,7 @@ class Tabuleiro(Subject):
         if 0 <= i < self.linhas and 0 <= j < self.colunas:
             self.tabuleiro[i][j].abrir()
 
-    def getValor(self, i: int, j: int):
+    def getValor(self, i: int, j: int)-> int:
         """ Retorna o valor da celula 
 
         Args:
@@ -91,20 +96,16 @@ class Tabuleiro(Subject):
         return self.tabuleiro[i][j].getValor()
 
     
-    def flagCelula(self, i: int, j: int):
-        """ set flag na celula correspondente
+    def flagCelula(self, i: int, j: int)-> None:
+        """ Set flag na celula correspondente
 
         Args:
             i (int): coordenada x
             j (int): coordenada y
-
-        Returns:
-            bool
         """
 
         if 0 <= i < self.linhas and 0 <= j < self.colunas:
-            return self.tabuleiro[i][j].setFlag()
-        return False
+            self.tabuleiro[i][j].setFlag()
     
     def contarVizinhos(self, matriz: list[list[bool]], i: int, j: int)-> int:
         """ Conta quantas celulas de bomba existe ao redor da celula
@@ -134,7 +135,7 @@ class Tabuleiro(Subject):
                         contador += 1
         return contador
     
-    def abrirTabuleiro(self):
+    def abrirTabuleiro(self)-> None:
         """ Abre todas as celulas do tabuleiro
         """
 
@@ -142,14 +143,17 @@ class Tabuleiro(Subject):
             for j in range(self.colunas):
                 self.tabuleiro[i][j].abrir(False)
 
-    def setCelulas(self):
+    def setCelulas(self)-> None:
+        """ Marca as celulas como bombas
+        """
+
         for i in range(self.linhas):
             for j in range(self.colunas):
                 if self.tabuleiro[i][j] == 9:
                     self.celulas[i][j].bomba = True
 
-    def notificarObserver(self):
-        """ notifica o comando de que o jogo acabou
+    def notificarObserver(self)-> None:
+        """ Notifica o comando de que o jogo acabou
         """
 
         for observer in self.observer:

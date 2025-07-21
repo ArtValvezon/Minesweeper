@@ -10,6 +10,7 @@ class Celula(Subject, Observer):
             controle (Controle): controle responsavel por armazanar as caracteristicas das celulas
             valor (int, optional): Valor de bombas da celula, 9 = bomba. Defaults to 0.
         """
+
         self.aberto = False
         self.flag = False
         self.explodiu = False
@@ -17,72 +18,68 @@ class Celula(Subject, Observer):
         self.observer = []
         self.controle = controle
 
-    def update(self):
+    def update(self)-> None:
         """ Celula adjacente abre essa
         """
+
         self.abrir()
 
-    def adicionarTabuleito(self, tabuleiro):
+    def adicionarTabuleito(self, tabuleiro)-> None:
         """ Adiciona um tabuleiro como observer 
 
         Args:
             tabuleiro (Tabuleiro): tabuleiro que a celula esta acossiada
         """
+        
         self.tabuleiro = tabuleiro
 
-    def notificarTabuleiro(self):
+    def notificarTabuleiro(self)-> None:
         """ Notifica o tabuleiro que uma celula foi explodida
         """
 
         if self.tabuleiro:
             self.tabuleiro.notificarObserver()
 
-    def abrir(self, jogo= True)-> bool:
+    def abrir(self, jogo= True)-> None:
         """ Abre celula 
 
         Args:
             jogo (bool, optional): Caso o jogo tenha terminado jogo = False. Defaults to True.
-
-        Returns:
-            bool
         """
 
         if jogo:
             if not self.flag:
                 if self.aberto:
                     self.abrirAdjacentes()
-                    return False
+                    return 
                 self.aberto = True
                 self.controle.abreCasa()
                 if self.valor == 9:
                     self.explodiu = True
                     self.notificarTabuleiro()
-                    return True
+                    return 
                 if self.valor == 0:
                     self.notificarObserver()
         else:
             self.aberto = True
-        return False
+        return 
     
-    def setFlag(self)-> bool:
+    def setFlag(self)-> None:
         """ Adiciona ou remove bandeira da celula
-
-        Returns:
-            bool
         """
 
         if not self.aberto:
             if self.flag:
                 if self.controle.removeFlag():
                     self.flag = not self.flag
-                    return True
+                    return 
             else:
                 if self.controle.adicionaFlag():
                     self.flag = not self.flag
-                    return True
-        return False
+                    return 
+        return 
     
-    def getValor(self):
+    def getValor(self)-> any:
         """ Retorna o estado da celula
 
         Returns:
@@ -98,7 +95,7 @@ class Celula(Subject, Observer):
         else:
             return "X"
         
-    def abrirAdjacentes(self):
+    def abrirAdjacentes(self)-> None:
         """ Conta as flag para abrir as cellas adjacentes
         """
         

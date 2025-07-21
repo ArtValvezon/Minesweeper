@@ -9,14 +9,14 @@ class Controle(Subject):
         self.flag = 0
         
 
-    def reset(self):
+    def reset(self)-> None:
         """ Reinicia a quantidade de casas fechadas
         """
 
         self.casas = self.totalCasas
         self.flag = 0
 
-    def adicionaFlag(self):
+    def adicionaFlag(self)-> None:
         """ Se tiver menos flasgs do que bombas adiciona uma flag
 
         Returns:
@@ -28,7 +28,7 @@ class Controle(Subject):
             return True
         return False
     
-    def removeFlag(self):
+    def removeFlag(self)-> None:
         """ Remove um flag se tiver flags marcadas
 
         Returns:
@@ -40,7 +40,7 @@ class Controle(Subject):
             return True
         return False
     
-    def abreCasa(self):
+    def abreCasa(self)-> None:
         """ Abre uma casa, se tiver apenas bombaas fachadas notifica o comando
 
         Returns:
@@ -52,15 +52,15 @@ class Controle(Subject):
             self.notificarObserver()
             return True
     
-    def notificarObserver(self):
+    def notificarObserver(self)-> None:
         """ Notifica o comando que o jogador ganhou o jogo
         """
-        
+
         for observer in self.observer:
             observer.update("ganhou")
 
-    def getCasas(self):
+    def getCasas(self)-> int:
         return self.casas
     
-    def getBombas(self):
+    def getBombas(self)-> int:
         return self.bombas - self.flag

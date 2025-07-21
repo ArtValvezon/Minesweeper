@@ -6,15 +6,15 @@ class Dificuldade(ABC):
         self.colunas = colunas
         self.bombas = bombas
 
-    def getBombas(self):
+    def getBombas(self)-> int:
         return self.bombas
     
-    def getLinha(self):
+    def getLinha(self)-> int:
         return self.linhas
     
-    def getColuna(self):
+    def getColuna(self)-> int:
         return self.colunas
 
     @abstractmethod
-    def getDificuldade(self):
+    def getDificuldade(self)-> str:
         raise NotImplementedError("Subclasses should implement this method")
