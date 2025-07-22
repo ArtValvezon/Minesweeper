@@ -1,67 +1,55 @@
 import tkinter as tk
+from tkinter import ttk
 
-ligado = 'red'
-desligado = 'gray20'
-fundo = 'black'
+root = tk.Tk()
+root.title("Historico")
+root.geometry("200x300")
 
-class Display7Segmentos:
-    mapa_segmentos = {
-        '0': 'ABCDEF',
-        '1': 'BC',
-        '2': 'ABGED',
-        '3': 'ABGCD',
-        '4': 'FGBC',
-        '5': 'AFGCD',
-        '6': 'AFGCDE',
-        '7': 'ABC',
-        '8': 'ABCDEFG',
-        '9': 'AFGBC',
-    }
+def criarHistorico(self)-> None:
 
-    def __init__(self, root, cor_ativa=ligado):
-        self.cor_ativa = cor_ativa
-        self.canvas = tk.Canvas(root, width=28, height=56, bg='black')
-        self.canvas.pack()
+    janela = tk.Toplevel(root)
 
-        desligado = "#4D0404"  # Cor cinza escuro para os segmentos desligados
+    notebook = ttk.Notebook(janela)
+    notebook.pack(fill='both', expand=True)
 
-        # Cada segmento é desenhado como um trapezoide
-        self.segmentos = {
-            'A': self.canvas.create_polygon(5, 3, 26, 3, 19, 8, 10, 8, fill=desligado),
-            'B': self.canvas.create_polygon(28, 5, 28, 28, 23, 23, 23, 10, fill=desligado),
-            'C': self.canvas.create_polygon(28, 31, 28, 54, 23, 49, 23, 36, fill=desligado),
-            'D': self.canvas.create_polygon(5, 56, 26, 56, 19, 51, 10, 51, fill=desligado),
-            'E': self.canvas.create_polygon(3, 31, 3, 54, 8, 49, 8, 36, fill=desligado),
-            'F': self.canvas.create_polygon(3, 5, 3, 28, 8, 23, 8, 10, fill=desligado),
-            'G': self.canvas.create_polygon(7, 28, 24, 28, 19, 33, 10, 33, fill=desligado),
-        }
+    # Criar a primeira aba (ex: Jogo)
+    aba1 = tk.Frame(notebook)
+    notebook.add(aba1, text="Histórico")
 
-    def mostrar_numero(self, numero):
-        numero = str(numero)
-        segmentos_ativos = self.mapa_segmentos.get(numero, '')
-        for nome, segmento in self.segmentos.items():
-            cor = self.cor_ativa if nome in segmentos_ativos else desligado
-            self.canvas.itemconfig(segmento, fill=cor)
+    dificuldade = 'facil'
 
+    def getHistorico()-> str:
+        with open("App/teste/arquivo.txt", "r", encoding="utf-8") as f:
+            conteudo = f.read()
+            return conteudo
+        
+    def setHistorico(texto: str)-> None:
+        with open("App/teste/arquivo.txt", "a", encoding="utf-8") as f:
+            pontos = "." * (25 - len(texto) - len(dificuldade))
+            escrever = f"\n{texto}{pontos}{dificuldade}"
+            f.write(escrever)
+            fecharJanela()
 
-# Exemplo de uso
-if __name__ == "__main__":
-    root = tk.Tk()
-    root.title("Display 7 Segmentos - Trapezoide")
+    def clearHistorico()-> None:
+        with open("App/teste/arquivo.txt", "w", encoding="utf-8") as f:
+            f.truncate(0)
+            fecharJanela()
 
-    display = Display7Segmentos(root, cor_ativa='lime')
+    def fecharJanela()-> None:
+        janela.destroy
 
-    entrada = tk.Entry(root)
-    entrada.pack()
+    tk.Label(aba1, text=getHistorico()).pack(pady=10)
+    tk.Button(aba1, text="Limpar Historico", command=lambda: clearHistorico()).pack()
 
-    def atualizar_display():
-        numero = entrada.get()
-        if numero.isdigit() and 0 <= int(numero) <= 9:
-            display.mostrar_numero(numero)
-        else:
-            print("Digite um número de 0 a 9.")
+    aba2 = tk.Frame(notebook)
+    notebook.add(aba2, text="Cadastro")
 
-    btn = tk.Button(root, text="Mostrar", command=atualizar_display)
-    btn.pack()
+    tk.Label(aba2, text="Coloque seu nome aqui:").pack()
+    comentario = tk.Text(aba2, height=1, width=10)
+    comentario.pack(pady=5)
+    tk.Button(aba2, text="Enviar", command=lambda: setHistorico(comentario.get("1.0", tk.END).strip())).pack()
+
+    with open("arquivo.txt", "a", encoding="utf-8") as f:
+        f.write("\nNovo comentário adicionado.")
 
     root.mainloop()
