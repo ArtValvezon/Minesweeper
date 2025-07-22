@@ -2,6 +2,7 @@ import random
 from celula import Celula
 from Interface.subject import Subject
 from controle import Controle
+from BombaExplodiuException import BombaExplodiuException
 
 # random.seed(42) 
 
@@ -84,7 +85,10 @@ class Tabuleiro(Subject):
         """
 
         if 0 <= i < self.linhas and 0 <= j < self.colunas:
-            self.tabuleiro[i][j].abrir()
+            try:
+                self.tabuleiro[i][j].abrir()
+            except BombaExplodiuException:
+                self.notificarObserver()
 
     def getValor(self, i: int, j: int)-> int:
         """ Retorna o valor da celula 

@@ -1,5 +1,6 @@
 from Interface.observer import Observer
 from Interface.subject import Subject
+from BombaExplodiuException import BombaExplodiuException
 
 
 class Celula(Subject, Observer):
@@ -30,7 +31,7 @@ class Celula(Subject, Observer):
         Args:
             tabuleiro (Tabuleiro): tabuleiro que a celula esta acossiada
         """
-        
+
         self.tabuleiro = tabuleiro
 
     def notificarTabuleiro(self)-> None:
@@ -56,8 +57,8 @@ class Celula(Subject, Observer):
                 self.controle.abreCasa()
                 if self.valor == 9:
                     self.explodiu = True
-                    self.notificarTabuleiro()
-                    return 
+                    raise BombaExplodiuException
+                    
                 if self.valor == 0:
                     self.notificarObserver()
         else:

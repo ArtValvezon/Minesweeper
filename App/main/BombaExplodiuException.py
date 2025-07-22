@@ -1,0 +1,2 @@
+class BombaExplodiuException(Exception):
+    pass
