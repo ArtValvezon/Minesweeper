@@ -206,7 +206,7 @@ class Interface():
         menu = Menu(self.root)
 
         menuAjuda = Menu(menu, tearoff=0)
-        menuAjuda.add_command(label="Sobre", command=lambda: messagebox.showinfo("Sobre", "Este é um exemplo de menu Tkinter."))
+        menuAjuda.add_command(label="Sobre", command=lambda: messagebox.showinfo("Sobre", sobre))
         menuAjuda.add_separator()
         menuAjuda.add_command(label="Regras", command=lambda: messagebox.showinfo("Regras", regras))
         menu.add_cascade(label="Ajuda", menu=menuAjuda)
@@ -352,4 +352,10 @@ class Interface():
 regras = """
 Regras do Campo Minado
 Campo Minado é um jogo de lógica onde o objetivo é abrir todas as células que não contêm minas, usando como pista os números que aparecem ao redor das células abertas — cada número indica quantas minas existem nas oito células adjacentes. O jogador usa o botão esquerdo do mouse para abrir células e o botão direito para marcar minas com bandeiras. Se abrir uma célula com mina, perde o jogo; se abrir todas as células seguras, vence. A primeira jogada é sempre segura, e o desafio está em deduzir a posição das minas com base na lógica dos números.
+"""
+sobre = """Este jogo foi desenvolvido como parte de um projeto da disciplina de Programação Orientada a Objetos. A proposta era criar um sistema completo utilizando conceitos como encapsulamento, herança, classes abstratas, tratamento de exceções e interface gráfica.
+
+Escolhi recriar o clássico Campo Minado porque é um jogo simples, mas desafiador, que me permitiu explorar a lógica por trás do funcionamento de um tabuleiro interativo com diferentes níveis de dificuldade.
+
+O objetivo foi entregar uma experiência visualmente agradável, com jogabilidade fluida e estrutura de código bem organizada. Também adicionei um sistema de histórico para registrar vitórias, tornando o jogo mais envolvente.
 """
