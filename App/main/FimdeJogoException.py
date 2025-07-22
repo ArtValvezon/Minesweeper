@@ -1,0 +1,2 @@
+class FimdeJogoException(Exception):
+    pass

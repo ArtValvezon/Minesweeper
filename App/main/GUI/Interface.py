@@ -1,8 +1,14 @@
 from tkinter import *
 from tkinter import messagebox
+from tkinter import ttk
 from adaptador import Adaptador
 from Interface.subject import Subject
-from GUI.display import Display7Segmentos
+from GUI.display import Display
+from TrocarDificuldadeException import TrocarDificuldadeException
+from FimdeJogoException import FimdeJogoException
+from datetime import datetime
+
+
 
 
 altura_sombra = 4
@@ -59,14 +65,17 @@ class Interface():
         """
 
         self.root.mainloop()
-        return self.flag
+        if self.flag:
+            raise TrocarDificuldadeException
+        raise FimdeJogoException
     
     def stop(self)-> None:
         """ Cancela a GUI e marca flag como True
         """
 
-        self.flag = True
+        
         self.root.destroy()
+        self.flag = True
 
     def getCell_Image(self, i: int, j: int)-> Image:
         """ Retorna a imagem correspondente ao conteudo da celula
@@ -263,16 +272,59 @@ class Interface():
             self.resetDisplay()
 
         ligado = 'red'
-        self.display_Bomb_Centena = Display7Segmentos(self.root, cor_ativa=ligado, x=altura_bordas + 3, y=altura_bordas + 3)
-        self.display_Bomb_Dezena = Display7Segmentos(self.root, cor_ativa=ligado, x=altura_bordas + 31, y=altura_bordas + 3)
-        self.display_Bomb_Unidade = Display7Segmentos(self.root, cor_ativa=ligado, x=altura_bordas + 59, y=altura_bordas + 3)
+        self.display_Bomb_Centena = Display(self.root, cor_ativa=ligado, x=altura_bordas + 3, y=altura_bordas + 3)
+        self.display_Bomb_Dezena = Display(self.root, cor_ativa=ligado, x=altura_bordas + 31, y=altura_bordas + 3)
+        self.display_Bomb_Unidade = Display(self.root, cor_ativa=ligado, x=altura_bordas + 59, y=altura_bordas + 3)
 
-        self.display_Casa_Centena = Display7Segmentos(self.root, cor_ativa=ligado, x=self.largura_root - (altura_bordas + 88), y=altura_bordas + 3)
-        self.display_Casa_Dezena = Display7Segmentos(self.root, cor_ativa=ligado, x=self.largura_root - (altura_bordas + 60), y=altura_bordas + 3)
-        self.display_Casa_Unidade = Display7Segmentos(self.root, cor_ativa=ligado, x=self.largura_root - (altura_bordas + 32), y=altura_bordas + 3)
+        self.display_Casa_Centena = Display(self.root, cor_ativa=ligado, x=self.largura_root - (altura_bordas + 88), y=altura_bordas + 3)
+        self.display_Casa_Dezena = Display(self.root, cor_ativa=ligado, x=self.largura_root - (altura_bordas + 60), y=altura_bordas + 3)
+        self.display_Casa_Unidade = Display(self.root, cor_ativa=ligado, x=self.largura_root - (altura_bordas + 32), y=altura_bordas + 3)
 
         self.face = Button(self.root, image=self.imagens["jogando"], bd=0, highlightthickness=0, padx=0, pady=0, relief="flat", command=reset)
         self.face.place(x=(self.largura_root - 31) // 2, y=altura_bordas + 15)
+
+    def getLog(self)-> None:
+
+        janela = Toplevel(self.root)
+
+        notebook = ttk.Notebook(janela)
+        notebook.pack(fill='both', expand=True)
+
+        aba1 = Frame(notebook)
+        notebook.add(aba1, text="Histórico")
+
+        def getHistorico()-> str:
+            with open("App/teste/arquivo.txt", "r", encoding="utf-8") as f:
+                conteudo = f.read()
+                return conteudo
+            
+        def setHistorico(texto: str)-> None:
+            with open("App/teste/arquivo.txt", "a", encoding="utf-8") as f:
+                agora = datetime.now().strftime("%d/%m/%Y")
+                dificuldade = self.adaptador.getDificuldade()
+                pontos = "." * (25 - len(texto) - len(dificuldade))
+                escrever = f"\n{texto}{pontos}{dificuldade}...{agora}"
+                f.write(escrever)
+                fecharJanela()
+
+        def clearHistorico()-> None:
+            with open("App/teste/arquivo.txt", "w", encoding="utf-8") as f:
+                f.truncate(0)
+                fecharJanela()
+
+        def fecharJanela()-> None:
+            janela.destroy()
+
+        Label(aba1, text=getHistorico()).pack(pady=10)
+        Button(aba1, text="Limpar Historico", command=lambda: clearHistorico()).pack()
+
+        aba2 = Frame(notebook)
+        notebook.add(aba2, text="Cadastro")
+
+        Label(aba2, text="Coloque seu nome aqui:").pack()
+        comentario = Text(aba2, height=1, width=10)
+        comentario.pack(pady=5)
+        Button(aba2, text="Enviar", command=lambda: setHistorico(comentario.get("1.0", END).strip())).pack()
 
     def atualizarPlacar(self, bombas: int = 0, casas: int = 0)-> None:
         """ Atualiza os placares de pontuação com o numero de casas e bombas
@@ -281,16 +333,18 @@ class Interface():
         bombas_str = str(bombas).zfill(3)
         casas_str = str(casas).zfill(3)
 
-        self.display_Bomb_Centena.mostrar_numero(bombas_str[0])
-        self.display_Bomb_Dezena.mostrar_numero(bombas_str[1])
-        self.display_Bomb_Unidade.mostrar_numero(bombas_str[2])
+        self.display_Bomb_Centena.mostrarNumero(bombas_str[0])
+        self.display_Bomb_Dezena.mostrarNumero(bombas_str[1])
+        self.display_Bomb_Unidade.mostrarNumero(bombas_str[2])
 
-        self.display_Casa_Centena.mostrar_numero(casas_str[0])
-        self.display_Casa_Dezena.mostrar_numero(casas_str[1])
-        self.display_Casa_Unidade.mostrar_numero(casas_str[2])
+        self.display_Casa_Centena.mostrarNumero(casas_str[0])
+        self.display_Casa_Dezena.mostrarNumero(casas_str[1])
+        self.display_Casa_Unidade.mostrarNumero(casas_str[2])
 
         self.face
         estado = self.adaptador.getEstado()
+        if estado == "ganhou":
+            self.getLog()
         nova_imagem = self.imagens[estado]
         self.face.configure(image=nova_imagem)
         self.face.image = nova_imagem
