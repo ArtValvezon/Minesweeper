@@ -32,6 +32,17 @@ class Adaptador(Singleton):
     def setDificuldade(self, dificuldade: str)-> None:
         self.comando.setDificuldade(dificuldade)
 
+    def getDificuldade(self)-> str:
+        match self.controle.getCasas():
+            case 10:
+                return "Facil"
+            case 40:
+                return "Medio"
+            case 99:
+                return "Dificil"
+            case _:
+                return "Ferrou!"
+
     def reset(self)-> None:
         self.comando.reset()
 

@@ -4,7 +4,7 @@ ligado = 'red'
 desligado = '#130101'
 fundo = 'black'
 
-class Display7Segmentos:
+class Display:
     mapa_segmentos = {
         '0': 'ABCDEF',
         '1': 'BC',
@@ -43,7 +43,7 @@ class Display7Segmentos:
         }
 
 
-    def mostrar_numero(self, numero: int):
+    def mostrarNumero(self, numero: int)-> None:
         """ Revela o numero passado no display
 
         Args:
@@ -56,7 +56,7 @@ class Display7Segmentos:
             cor = self.cor_ativa if nome in segmentos_ativos else desligado
             self.canvas.itemconfig(segmento, fill=cor)
 
-    def limpar(self):
+    def limpar(self)-> None:
         """ Desliga todos o segmentos do display
         """
         for segmento in self.segmentos.values():
