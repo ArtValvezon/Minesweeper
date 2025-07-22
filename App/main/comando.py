@@ -5,10 +5,16 @@ from tabuleiro import Tabuleiro
 from Interface.observer import Observer
 
 class Comando(Singleton, Observer):
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instancia is None:
+            cls._instancia = super().__new__(cls)
+            cls._instancia.dificuldade = Facil() 
+        return cls._instancia
+    
     def __init__(self):
         Observer.__init__(self)
         Singleton.__init__(self)
-        self.dificuldade = Facil() 
         self.criarJogo()
 
     def criarJogo(self)-> None:

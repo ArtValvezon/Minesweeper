@@ -9,6 +9,7 @@ def main():
 
     while True:
         try:
+            comando = Comando()
             tabuleiro = comando.getTabuleiro()
             controle = comando.getControle()
 
